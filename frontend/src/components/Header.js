@@ -46,9 +46,14 @@ const Header = () => {
   };
 
   const NavLink = ({ to, children }) => {
-    const isActive = location.pathname === to;
+    const isActive = activeLink === to;
     return (
-      <Nav.Link as={Link} to={to} className={isActive ? "active" : ""}>
+      <Nav.Link
+        as={Link}
+        to={to}
+        className={isActive ? "active" : ""}
+        onClick={() => handleLinkClick(to)} // Calls handleLinkClick on click
+      >
         {children}
       </Nav.Link>
     );

@@ -5,21 +5,13 @@ import {
   useCreateMealPlanMutation,
   useUpdateMealPlanMutation,
 } from "../slices/usersApiSlice";
-import Loader from "./Loader";
 
 const MealPlan = () => {
-  const [currentDate, setCurrentDate] = useState(
-    new Date()
-      .toLocaleDateString("en-US", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-      .split("/")
-      .reverse()
-      .join("-")
+  const [currentDate] = useState(
+    new Date().toISOString().split("T")[0] 
   );
 
+  // State for meal inputs
   const [meal1, setMeal1] = useState("");
   const [meal2, setMeal2] = useState("");
   const [meal3, setMeal3] = useState("");
@@ -27,75 +19,76 @@ const MealPlan = () => {
   const [meal5, setMeal5] = useState("");
   const [snacks, setSnacks] = useState("");
 
+  // Mutations for creating and updating meal plans
   const [createMealPlan] = useCreateMealPlanMutation();
   const [updateMealPlan] = useUpdateMealPlanMutation();
 
   useEffect(() => {
     const fetchMealPlan = async () => {
       try {
+        console.log("Fetching meal plan for date:", currentDate);
         const response = await fetch(`/api/user/meal-plan/${currentDate}`);
+        if (!response.ok) throw new Error("Failed to fetch meal plan");
         const data = await response.json();
 
-        setMeal1(data.meal1);
-        setMeal2(data.meal2);
-        setMeal3(data.meal3);
-        setMeal4(data.meal4);
-        setMeal5(data.meal5);
-        setSnacks(data.snacks);
-
-        const mealPlanData = JSON.stringify(data);
-        localStorage.setItem("mealPlan", mealPlanData);
+        console.log("Fetched Meal Plan Data:", data);
+        setMeal1(data.meal1 || "");
+        setMeal2(data.meal2 || "");
+        setMeal3(data.meal3 || "");
+        setMeal4(data.meal4 || "");
+        setMeal5(data.meal5 || "");
+        setSnacks(data.snacks || "");
+        localStorage.setItem("mealPlan", JSON.stringify(data));
       } catch (error) {
-        console.error("Fetch meal plan error:", error);
+        console.error("Fetch meal plan error:", error.message);
+        const storedMealPlan = localStorage.getItem("mealPlan");
+        if (storedMealPlan) {
+          const parsedMealPlan = JSON.parse(storedMealPlan);
+          setMeal1(parsedMealPlan.meal1 || "");
+          setMeal2(parsedMealPlan.meal2 || "");
+          setMeal3(parsedMealPlan.meal3 || "");
+          setMeal4(parsedMealPlan.meal4 || "");
+          setMeal5(parsedMealPlan.meal5 || "");
+          setSnacks(parsedMealPlan.snacks || "");
+        }
       }
     };
 
-    // Load the meal plan from local storage if fetching fails
-    const storedMealPlan = localStorage.getItem("mealPlan");
-    if (storedMealPlan) {
-      const parsedMealPlan = JSON.parse(storedMealPlan);
-      setMeal1(parsedMealPlan.meal1);
-      setMeal2(parsedMealPlan.meal2);
-      setMeal3(parsedMealPlan.meal3);
-      setMeal4(parsedMealPlan.meal4);
-      setMeal5(parsedMealPlan.meal5);
-      setSnacks(parsedMealPlan.snacks);
-    } else {
-      fetchMealPlan();
-    }
-  }, []);
+    fetchMealPlan();
+  }, [currentDate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const mealPlanData = {
+      date: currentDate,
+      meal1,
+      meal2,
+      meal3,
+      meal4,
+      meal5,
+      snacks,
+    };
+
     try {
-      const mealPlanData = {
-        date: currentDate,
-        meal1,
-        meal2,
-        meal3,
-        meal4,
-        meal5,
-        snacks,
-      };
-
-      // Save the meal plan to local storage
-      localStorage.setItem("mealPlan", JSON.stringify(mealPlanData));
-
-      // Check if the meal plan already exists for the current date
-      const existingMealPlan = await updateMealPlan(mealPlanData).unwrap();
-
-      if (existingMealPlan) {
+      console.log("Submitting meal plan data:", mealPlanData);
+      const updatedMealPlan = await updateMealPlan(mealPlanData).unwrap();
+      if (updatedMealPlan) {
         toast.success("Meal plan updated successfully!");
-      } else {
-        const newMealPlan = await createMealPlan(mealPlanData).unwrap();
-        if (newMealPlan) {
-          toast.success("Meal plan created successfully!");
-        }
+        return;
       }
-    } catch (error) {
+    } catch (updateError) {
+      console.error("Update meal plan error:", updateError.message);
+    }
+
+    try {
+      const newMealPlan = await createMealPlan(mealPlanData).unwrap();
+      if (newMealPlan) {
+        toast.success("Meal plan created successfully!");
+      }
+    } catch (createError) {
       toast.error("Failed to save the meal plan.");
-      console.error("Save meal plan error:", error);
+      console.error("Create meal plan error:", createError.message);
     }
   };
 

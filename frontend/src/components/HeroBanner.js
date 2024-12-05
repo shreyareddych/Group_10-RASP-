@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link, useLocation } from "react-router-dom";
-import { Box, Stack, Typography, Button } from '@mui/material';
+import { Link } from "react-router-dom";
+import { Box, Typography, Button } from '@mui/material';
 import HeroBannerImage from '../assets/images/banner.png';
 
 const HeroBanner = () => {
@@ -17,14 +17,13 @@ const HeroBanner = () => {
       p="20px"
     >
       <Box flex="1">
-        <Typography color="FF2625" fontWeight="600" fontSize={{ lg: '26px', xs: '22px' }}> {/* Adjust font size based on breakpoints */}
-          Shape Up
+        <Typography color="FF2625" fontWeight="600" fontSize={{ lg: '26px', xs: '22px' }}>
+          Fitness Scheduler
         </Typography>
         <Typography fontWeight={700} sx={{ fontSize: { lg: '44px', xs: '32px' } }}>
           We are here to help <br /> you to achieve your <br /> fitness dreams.
         </Typography>
-        <Button variant="contained" color="success" component={Link}
-  to="../pages/features">
+        <Button variant="contained" color="success" component={Link} to="../pages/features">
           What we offer
         </Button>
       </Box>

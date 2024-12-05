@@ -1,7 +1,7 @@
 {
   "name": "shape-up-app",
   "version": "1.0.0",
-  "description": "<h1 align=\"center\"> 🌐 Shape Up App </h1> <p align=\"center\"> MongoDB, Expressjs, React/Redux, Nodejs </p>",
+  "description": "<h1 align=\"center\"> 🌐 Fitness scheduler App </h1> <p align=\"center\"> MongoDB, Expressjs, React/Redux, Nodejs </p>",
   "type": "module",
   "main": "app.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
+    "express": "^4.21.1",
     "express-async-handler": "^1.2.0",
     "http-proxy-middleware": "^2.0.6",
     "jsonwebtoken": "^9.0.0",

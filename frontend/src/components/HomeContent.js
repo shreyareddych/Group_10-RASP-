@@ -57,7 +57,7 @@ const HomeContent = () => {
         <Col md={6}>
           <h1>Start your fitness journey today!</h1>
           <p>
-            Sign up for Shape Up and get started on your path to a healthier
+            Sign up for Fitness Scheduler and get started on your path to a healthier
             lifestyle.
           </p>
           <Button
